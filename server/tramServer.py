@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 import pyberrynet
@@ -11,6 +12,8 @@ def main():
     
     try:
         while True:
+            os.system()
+
             results = berrynet.upload('picamera')
             detections = _parse_detections(results)
 
