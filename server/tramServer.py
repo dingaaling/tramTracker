@@ -3,21 +3,18 @@
 import os
 import sys
 import time
-import pyberrynet
+from berryNetProvider import BerryNetProvider
 
 def main():
     """Tram Server"""
 
-    berrynet = pyberrynet.run(warm_up=10, path='/home/pi/repos/BerryNet')
+    berrynet = BerryNetProvider()
     
     try:
         while True:
-            os.system()
-
-            results = berrynet.upload('picamera')
+            results = berrynet.analyze('boardcam')
             detections = _parse_detections(results)
 
-            print('results:')
             for detection in detections:
                 print(detection)
 

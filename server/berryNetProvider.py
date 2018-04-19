@@ -21,7 +21,7 @@ class BerryNetProvider():
             'local':    ('berrynet/event/localImage', None)
         }
 
-    def Analyze(self, img_source=None, path=None, client_id="", save_img=False, save_path=None, draw_bound=False, **kwargs):
+    def analyze(self, img_source=None, path=None, client_id="", save_img=False, save_path=None, draw_bound=False, **kwargs):
         """Analyze a new image from the source"""
 
         img_source = img_source.lower()
@@ -40,13 +40,15 @@ class BerryNetProvider():
 
         try:
             publish.single(topic, payload=message, hostname=self._server, port=self._port, client_id=client_id, **kwargs)
-            image = self._receive_img()
+            
+            print('Waiting for results...')
             results = self._receive_result()
+            print('Done.')
 
             # TODO: also return image location / possibly read file in
             # TODO: handle deletion of old images
 
-            return image, results
+            return results
 
         except Exception:
             # Failed to capture and/or analyze return no results
@@ -70,21 +72,11 @@ class BerryNetProvider():
 
     def open(self):
         # Start the static berry net service if required and warm up
-        BerryNetProvider.start()
+        os.system('berrynet-manager start')
+        print('Warming up...')
         time.sleep(10)
+        print('Done.')
 
     def close(self):
         # Stop the static berry net service
-        BerryNetProvider.stop()
-
-    @staticmethod
-    def start():
-        """Start the berry net service"""
-
-        os.system('berrynet-manager start')
-
-    @staticmethod
-    def stop():
-        """Stop the berry net service"""
-
-        return os.system('berrynet-manager stop')
+        os.system('berrynet-manager stop')
