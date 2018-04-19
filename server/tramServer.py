@@ -9,7 +9,8 @@ def main():
     """Tram Server"""
 
     berrynet = BerryNetProvider()
-    
+    berrynet.open()
+
     try:
         while True:
             results = berrynet.analyze('boardcam')
