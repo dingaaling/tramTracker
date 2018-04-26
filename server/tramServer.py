@@ -63,14 +63,13 @@ def run(camera, image_queue):
         # image_name = '%d.png' % (int(time.time()))
         # imwrite(image_name, current_image)
 
-        # TODO: process data
+        # TODO: process data and pass results to update function
         update()
 
         time.sleep(1)
         image_count += 1
 
 def update():
-    print('update')
     time_object = datetime.datetime.now()
     time_value = str(json.dumps(time_object.isoformat()).strip('\"'))
 
@@ -78,14 +77,15 @@ def update():
     payload['departingTime'] = time_value
     payload['arrivingTime'] = time_value
     json_payload = json.dumps(payload, indent=1)
+    
+    try:
+        response = requests.post("http://localhost:8000/update", \
+            headers = { u'content-type': u'application/json' }, \
+            data=json_payload)
 
-    print(json_payload)
-
-    response = requests.post("http://localhost:8000/update", \
-        headers = { u'content-type': u'application/json' }, \
-        data=json_payload)
-
-    print(response.status_code)
+        print('Status: %d' % (response.status_code))
+    except Exception:
+        print("Connection Refused")
 
 if __name__ == '__main__':
     main()
