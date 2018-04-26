@@ -8,6 +8,14 @@ from cv2 import VideoCapture
 from imageQueue import ImageQueue
 
 def main():
+    try:
+        run()
+    except KeyboardInterrupt:
+        pass
+    finally:
+        pass
+
+def run():
     camera = VideoCapture(0)
     image_queue = ImageQueue()
     
@@ -48,7 +56,8 @@ def main():
         # print(cropped_image.shape)
 
         # TODO: write image for testing
-        # imwrite('test.png', cropped_image)
+        image_name = '%d.png' % (int(time.time()))
+        imwrite(image_name, current_image)
 
         time.sleep(1)
 

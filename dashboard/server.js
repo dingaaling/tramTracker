@@ -22,11 +22,21 @@ http.listen(serverPort, function() {
 
 //---------------------- REST API COMMUNICATION (web browser)----------------//
 // Our handler function is passed a request and response object
-app.post('/test', function(req, res) {
-  console.log('route hit');
+app.post('/update', function(req, res) {
+  console.log('update route called');
   console.log(req.body)
 
-  io.emit('update', req.body.value);
+  var currentTime = Date.now();
+  var departingTime = new Date(req.body.departingTime);
+  var departingCountdown = calculateCountdown(currentTime, departingTime);
+  var arrivingTime = new Date(req.body.arrivingTime);
+  var arrivingCountdown = calculateCountdown(currentTime, arrivingTime);
+
+  io.emit('update',
+    departingTime.toLocaleTimeString(),
+    departingCountdown,
+    arrivingTime.toLocaleTimeString(),
+    arrivingCountdown);
 
   res.end();
 });
@@ -38,22 +48,10 @@ app.post('/test', function(req, res) {
 io.on('connect', function(socket) {
   console.log('a user connected');
 
-  // if you get the 'ledON' msg, send an 'H' to the Arduino
-  socket.on('ledON', function() {
-    console.log('ledON');
-    serial.write('H');
-  });
-
-  // if you get the 'ledOFF' msg, send an 'L' to the Arduino
-  socket.on('ledOFF', function() {
-    console.log('ledOFF');
-    serial.write('L');
-  });
-
-  //-- Addition: This function is called when the client clicks on the `Take a picture` button.
-  socket.on('takePicture', function() {
-    takePicture();
-  });
+  // //-- Addition: This function is called when the client clicks on the `Take a picture` button.
+  // socket.on('takePicture', function() {
+  //   takePicture();
+  // });
 
   // if you get the 'disconnect' message, say the user disconnected
   socket.on('disconnect', function() {
@@ -74,3 +72,25 @@ function takePicture() {
   // io.emit('newPicture', (imageName + '.jpg')); /// Lastly, the new name is send to the client web browser.
 }
 //----------------------------------------------------------------------------//
+
+function calculateCountdown(currentTime, otherTime) {
+  if (currentTime >= otherTime) {
+    return "NOW";
+  }
+
+  var diff = otherTime - currentTime;
+
+  var days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  diff -=  days * (1000 * 60 * 60 * 24);
+
+  var hours = Math.floor(diff / (1000 * 60 * 60));
+  diff -= hours * (1000 * 60 * 60);
+
+  var mins = Math.floor(diff / (1000 * 60));
+  diff -= mins * (1000 * 60);
+
+  var seconds = Math.floor(diff / (1000));
+  diff -= seconds * (1000);
+
+  return mins + " minutes, " + seconds + " seconds";
+}
