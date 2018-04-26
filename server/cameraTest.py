@@ -30,7 +30,8 @@ def run():
         image_count += 1
         time.sleep(1)
 
-    for i in range(10):
+    i = 0
+    while True:
         print(i)
     
         # Read image from the camera
@@ -60,6 +61,7 @@ def run():
         imwrite(image_name, current_image)
 
         time.sleep(1)
+        i += 1
 
 if __name__ == '__main__':
     main()
