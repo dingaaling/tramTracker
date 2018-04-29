@@ -3,6 +3,7 @@
 import sys
 import time
 import json
+import serial
 import requests
 import datetime
 import numpy as np
@@ -14,12 +15,14 @@ def main():
     """Tram Server"""
     try:
         camera = VideoCapture(0)
+        # serialbus = serial.Serial('/dev/ttyUSB0', 19200)
         image_queue = ImageQueue()
         run(camera, image_queue)
     except KeyboardInterrupt:
         pass
     finally:
         camera.release()
+        # serialbus.close()
 
 def run(camera, image_queue):
     # Fill image queue
