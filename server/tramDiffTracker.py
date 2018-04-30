@@ -11,7 +11,7 @@ class TramDiffTracker():
     ARRIVING = "ARRIVING"
     DEPARTING = "DEPARTING"
 
-    def __init__(self, threshold=900000):
+    def __init__(self, threshold=700000):
         """Create a tram diff tracker instance"""
         self._threshold = threshold
         self._is_detected = True
@@ -25,11 +25,17 @@ class TramDiffTracker():
         diff_sum = diff.sum()
         print(diff_sum)
 
-        if diff_sum >= self._threshold and self._is_detected == False:
+        # If difference from previous frame is above the threshold
+        if diff_sum >= self._threshold:
+            # If tram is already detected in this sequence
+            if self._is_detected:
+                return TramDiffTracker.NONE
+                
             # Determain the tram's direction of travel
             self._is_detected = True
             return self._determine_direction(diff)
-
+        
+        # The tram was not detected so clear state
         self._is_detected = False
         return TramDiffTracker.NONE
 
