@@ -60,9 +60,9 @@ def run(camera, serial_bus, image_queue, tram_blob_tracker):
         print(current_image.shape)
         print(previous_image.shape)
 
-        # TODO: write image for testing
-        image_name = '%d.png' % (int(time.time()))
-        imwrite(image_name, current_image)
+        # # TODO: write image for testing
+        # image_name = '%d.png' % (int(time.time()))
+        # imwrite(image_name, current_image)
 
         # # TODO: process data and pass results to update function
         # update()
@@ -72,8 +72,6 @@ def run(camera, serial_bus, image_queue, tram_blob_tracker):
 
         time.sleep(1)
         image_count += 1
-
-        break
 
 def update():
     time_object = datetime.datetime.now()
