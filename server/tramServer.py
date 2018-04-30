@@ -10,22 +10,28 @@ import numpy as np
 from cv2 import imwrite
 from cv2 import VideoCapture
 from imageQueue import ImageQueue
+from tramBlobTracker import TramBlobTracker
 
 def main():
     """Tram Server"""
     try:
         camera = VideoCapture(0)
-        # serialbus = serial.Serial('/dev/ttyUSB0', 19200)
+        serial_bus = None # serial.Serial('/dev/ttyUSB0', 19200)
         image_queue = ImageQueue()
-        run(camera, image_queue)
+        tram_blob_tracker = TramBlobTracker()
+
+        # Run the server loop
+        run(camera, serial_bus, image_queue, tram_blob_tracker)
     except KeyboardInterrupt:
         pass
     finally:
         camera.release()
         # serialbus.close()
 
-def run(camera, image_queue):
+def run(camera, serial_bus, image_queue, tram_blob_tracker):
     # Fill image queue
+    print('Populating initial image queue.')
+
     image_count = 0
     while image_count < 5:
         status, image = camera.read()
@@ -54,23 +60,20 @@ def run(camera, image_queue):
         print(current_image.shape)
         print(previous_image.shape)
 
-        # TODO: discuss cropping
-        # x = 0
-        # y = 0
-        # w = 500
-        # h = 500
-        # cropped_image = image[y:y + h, x: x + w]
-        # print(cropped_image.shape)
+        # TODO: write image for testing
+        image_name = '%d.png' % (int(time.time()))
+        imwrite(image_name, current_image)
 
-        # # TODO: write image for testing
-        # image_name = '%d.png' % (int(time.time()))
-        # imwrite(image_name, current_image)
+        # # TODO: process data and pass results to update function
+        # update()
 
-        # TODO: process data and pass results to update function
-        update()
+        result = tram_blob_tracker._find_keypoint(current_image)
+        print(result)
 
         time.sleep(1)
         image_count += 1
+
+        break
 
 def update():
     time_object = datetime.datetime.now()
