@@ -11,6 +11,7 @@ from cv2 import imwrite
 from cv2 import VideoCapture
 from imageQueue import ImageQueue
 from tramBlobTracker import TramBlobTracker
+from tramDiffTracker import TramDiffTracker
 
 def main():
     """Tram Server"""
@@ -19,16 +20,17 @@ def main():
         serial_bus = None # serial.Serial('/dev/ttyUSB0', 19200)
         image_queue = ImageQueue()
         tram_blob_tracker = TramBlobTracker()
+        tram_diff_tracker = TramDiffTracker()
 
         # Run the server loop
-        run(camera, serial_bus, image_queue, tram_blob_tracker)
+        run(camera, serial_bus, image_queue, tram_diff_tracker)
     except KeyboardInterrupt:
         pass
     finally:
         camera.release()
         # serialbus.close()
 
-def run(camera, serial_bus, image_queue, tram_blob_tracker):
+def run(camera, serial_bus, image_queue, tram_diff_tracker):
     # Fill image queue
     print('Populating initial image queue.')
 
@@ -60,15 +62,13 @@ def run(camera, serial_bus, image_queue, tram_blob_tracker):
         print(current_image.shape)
         print(previous_image.shape)
 
-        result = tram_blob_tracker._find_keypoint(current_image)
-        print(result)
+        detected = tram_diff_tracker.detect(previous_image, current_image)
+        print(detected)
 
         # TODO: write image for testing
-        image_name = '%d.png' % (int(time.time()))
-        if result != None:
+        if detected:
             image_name = '%d-detected.png' % (int(time.time()))
-
-        imwrite(image_name, current_image)
+            imwrite(image_name, current_image)
 
         # # TODO: process data and pass results to update function
         # update()
