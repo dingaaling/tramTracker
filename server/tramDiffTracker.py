@@ -18,6 +18,7 @@ class TramDiffTracker():
 
         diff = cv2.absdiff(previous_image, current_image)
         diff_sum = diff.sum()
+        print(diff_sum)
 
         if diff_sum >= self._threshold:
             return True
