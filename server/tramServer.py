@@ -60,15 +60,18 @@ def run(camera, serial_bus, image_queue, tram_blob_tracker):
         print(current_image.shape)
         print(previous_image.shape)
 
+        result = tram_blob_tracker._find_keypoint(current_image)
+        print(result)
+
         # TODO: write image for testing
         image_name = '%d.png' % (int(time.time()))
+        if result != None:
+            image_name = '%d-detected.png' % (int(time.time()))
+
         imwrite(image_name, current_image)
 
         # # TODO: process data and pass results to update function
         # update()
-
-        result = tram_blob_tracker._find_keypoint(current_image)
-        print(result)
 
         time.sleep(1)
         image_count += 1
