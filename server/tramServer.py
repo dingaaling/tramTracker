@@ -35,7 +35,7 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
     print('Populating initial image queue.')
 
     image_count = 0
-    while image_count < 5:
+    while image_count < 1:
         status, image = camera.read()
         if not status:
             continue
