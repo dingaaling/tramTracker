@@ -7,7 +7,7 @@ import cv2
 class TramDiffTracker():
     """Tram Diff Tracker"""
 
-    def __init__(self, threshold=100000):
+    def __init__(self, threshold=1000000):
         """Create a tram diff tracker instance"""
         self._threshold = threshold
 
