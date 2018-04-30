@@ -62,12 +62,16 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
         print(current_image.shape)
         print(previous_image.shape)
 
-        detected = tram_diff_tracker.detect(previous_image, current_image)
-        print(detected)
+        direction = tram_diff_tracker.detect(previous_image, current_image)
+        print(direction)
 
         # TODO: write image for testing
-        if detected:
-            image_name = '%d-detected.png' % (int(time.time()))
+        if direction == TramDiffTracker.ARRIVING:
+            image_name = '%d-ARRIVING.png' % (int(time.time()))
+            imwrite(image_name, current_image)
+
+        if direction == TramDiffTracker.DEPARTING:
+            image_name = '%d-DEPARTING.png' % (int(time.time()))
             imwrite(image_name, current_image)
 
         # # TODO: process data and pass results to update function
