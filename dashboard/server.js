@@ -26,17 +26,26 @@ app.post('/update', function(req, res) {
   console.log('update route called');
   console.log(req.body)
 
-  var currentTime = Date.now();
-  var departingTime = new Date(req.body.departingTime);
-  var departingCountdown = calculateCountdown(currentTime, departingTime);
-  var arrivingTime = new Date(req.body.arrivingTime);
-  var arrivingCountdown = calculateCountdown(currentTime, arrivingTime);
+  var status = req.body.status;
+  var value = parseInt(req.body.value);
+
+  if (status == 'UNKNOWN') {
+    // TODO:
+  }
+  else if (status == 'NOW') {
+    // TODO:
+  }
+  else if (status == 'ESTIMATE') {
+    // TODO:
+  }
+  else {
+    res.end();
+    return;
+  }
 
   io.emit('update',
-    departingTime.toLocaleTimeString(),
-    departingCountdown,
-    arrivingTime.toLocaleTimeString(),
-    arrivingCountdown);
+    status,
+    value);
 
   res.end();
 });
@@ -73,24 +82,11 @@ function takePicture() {
 }
 //----------------------------------------------------------------------------//
 
-function calculateCountdown(currentTime, otherTime) {
-  if (currentTime >= otherTime) {
-    return "NOW";
-  }
+function calculateCountdown(value) {
+  var minutes = Math.floor(value / 60);
+  value -= minutes * 60;
 
-  var diff = otherTime - currentTime;
+  var seconds = value;
 
-  var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  diff -=  days * (1000 * 60 * 60 * 24);
-
-  var hours = Math.floor(diff / (1000 * 60 * 60));
-  diff -= hours * (1000 * 60 * 60);
-
-  var mins = Math.floor(diff / (1000 * 60));
-  diff -= mins * (1000 * 60);
-
-  var seconds = Math.floor(diff / (1000));
-  diff -= seconds * (1000);
-
-  return mins + " minutes, " + seconds + " seconds";
+  return minutes + " minutes, " + seconds + " seconds";
 }

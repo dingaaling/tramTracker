@@ -5,12 +5,9 @@ client.js
 // WebSocket connection setup
 var socket = io();
 
-socket.on('update', function(departingTime, departingCountdown, arrivingTime, arrivingCountdown) {
+socket.on('update', function(departingStatus, departingValue) {
   console.log("indexjs-update")
 
-  document.getElementById('departingTime').textContent = departingTime;
-  document.getElementById('departingCountdown').textContent = departingCountdown;
-
-  document.getElementById('arrivingTime').textContent = arrivingTime;
-  document.getElementById('arrivingCountdown').textContent = arrivingCountdown;
+  document.getElementById('departingStatus').textContent = departingStatus;
+  document.getElementById('departingValue').textContent = departingValue;
 });
