@@ -10,7 +10,7 @@ import numpy as np
 from cv2 import imwrite
 from cv2 import VideoCapture
 from imageQueue import ImageQueue
-from tramBlobTracker import TramBlobTracker
+from tramState import TramState
 from tramDiffTracker import TramDiffTracker
 
 def main():
@@ -19,18 +19,18 @@ def main():
         camera = VideoCapture(0)
         serial_bus = None # serial.Serial('/dev/ttyUSB0', 19200)
         image_queue = ImageQueue()
-        tram_blob_tracker = TramBlobTracker()
+        tram_state = TramState()
         tram_diff_tracker = TramDiffTracker()
 
         # Run the server loop
-        run(camera, serial_bus, image_queue, tram_diff_tracker)
+        run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker)
     except KeyboardInterrupt:
         pass
     finally:
         camera.release()
         # serial_bus.close()
 
-def run(camera, serial_bus, image_queue, tram_diff_tracker):
+def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
     # Fill image queue
     print('Focusing the camera...')
     image_count = 0
@@ -56,10 +56,7 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
     print('Starting tram detection...')
     image_count = 0
     while True:
-        print(image_count)
-        
-        # Get the current time
-        current_time = time.time()
+        print('Image Number: %d' % (image_count))
 
         # Read image from the camera
         status, current_image = camera.read()
@@ -72,28 +69,37 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
         # Pull image from the queue
         previous_image = image_queue.dequeue()
 
-        print(current_image.shape)
-        print(previous_image.shape)
-
+        # Leverage the tram diff tracker to detect tram if present (None state returned if not)
         direction = tram_diff_tracker.detect(previous_image, current_image)
-        print(direction)
+        print('Direction: %s' % (direction))
 
-        # Write detection image for accuracy testing
         if direction == TramDiffTracker.ARRIVING:
-            image_name = '%d-ARRIVING.png' % (int(current_time))
+            # Update tram state for arrival
+            tram_state.set_arrival()
+
+            # Write detection image for accuracy testing
+            image_name = '%d-ARRIVING.png' % (int(time.time()))
             imwrite(image_name, current_image)
 
         if direction == TramDiffTracker.DEPARTING:
-            image_name = '%d-DEPARTING.png' % (int(current_time))
+            # Update tram state for departure
+            tram_state.set_departure()
+
+            # Write detection image for accuracy testing
+            image_name = '%d-DEPARTING.png' % (int(time.time()))
             imwrite(image_name, current_image)
 
-        # # TODO: process data and pass results to update function
-        # update()
+        status, current_estimate = tram_state.get_wait()
+        print('Wait: %s, %d' % (status, current_estimate))
+
+        # TODO: process data and pass results to update function
+        # update_frontend()
+        # update_display()
 
         time.sleep(1)
         image_count += 1
 
-def update():
+def update_frontend():
     time_object = datetime.datetime.now()
     time_value = str(json.dumps(time_object.isoformat()).strip('\"'))
 
@@ -110,6 +116,9 @@ def update():
         print('Status: %d' % (response.status_code))
     except Exception:
         print("Connection Refused")
+
+def update_display():
+    pass
 
 if __name__ == '__main__':
     main()
