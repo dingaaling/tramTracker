@@ -90,7 +90,7 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
             imwrite(image_name, current_image)
 
         status, current_estimate = tram_state.get_wait()
-        print('Wait: %s, %d' % (status, current_estimate))
+        print('Estimated Wait: %s, %d' % (status, current_estimate))
 
         # TODO: process data and pass results to update function
         # update_frontend()
