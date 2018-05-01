@@ -101,8 +101,8 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
 
 def update_frontend(wait_status, wait_value):
     payload = {}
-    payload['departingStatus'] = wait_status
-    payload['departingValue'] = wait_value
+    payload['status'] = wait_status
+    payload['value'] = wait_value
     json_payload = json.dumps(payload, indent=1)
     
     try:
