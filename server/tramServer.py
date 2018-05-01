@@ -28,12 +28,21 @@ def main():
         pass
     finally:
         camera.release()
-        # serialbus.close()
+        # serial_bus.close()
 
 def run(camera, serial_bus, image_queue, tram_diff_tracker):
     # Fill image queue
-    print('Populating initial image queue.')
+    print('Focusing the camera...')
+    image_count = 0
+    while image_count < 10:
+        status, image = camera.read()
+        if not status:
+            continue
 
+        image_count += 1
+        time.sleep(1)
+
+    print('Populating the initial image queue...')
     image_count = 0
     while image_count < 1:
         status, image = camera.read()
@@ -44,10 +53,14 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
         image_count += 1
         time.sleep(1)
 
+    print('Starting tram detection...')
     image_count = 0
     while True:
         print(image_count)
-    
+        
+        # Get the current time
+        current_time = time.time()
+
         # Read image from the camera
         status, current_image = camera.read()
         if not status:
@@ -65,13 +78,13 @@ def run(camera, serial_bus, image_queue, tram_diff_tracker):
         direction = tram_diff_tracker.detect(previous_image, current_image)
         print(direction)
 
-        # TODO: write image for testing
+        # Write detection image for accuracy testing
         if direction == TramDiffTracker.ARRIVING:
-            image_name = '%d-ARRIVING.png' % (int(time.time()))
+            image_name = '%d-ARRIVING.png' % (int(current_time))
             imwrite(image_name, current_image)
 
         if direction == TramDiffTracker.DEPARTING:
-            image_name = '%d-DEPARTING.png' % (int(time.time()))
+            image_name = '%d-DEPARTING.png' % (int(current_time))
             imwrite(image_name, current_image)
 
         # # TODO: process data and pass results to update function
