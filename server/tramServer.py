@@ -89,23 +89,20 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
             image_name = '%d-DEPARTING.png' % (int(time.time()))
             imwrite(image_name, current_image)
 
-        status, current_estimate = tram_state.get_wait()
-        print('Estimated Wait: %s, %d' % (status, current_estimate))
+        wait_status, wait_value = tram_state.get_wait()
+        print('Estimated Wait: %s, %d' % (wait_status, wait_value))
 
         # TODO: process data and pass results to update function
-        # update_frontend()
+        update_frontend(wait_status, wait_value)
         # update_display()
 
         time.sleep(1)
         image_count += 1
 
-def update_frontend():
-    time_object = datetime.datetime.now()
-    time_value = str(json.dumps(time_object.isoformat()).strip('\"'))
-
+def update_frontend(wait_status, wait_value):
     payload = {}
-    payload['departingTime'] = time_value
-    payload['arrivingTime'] = time_value
+    payload['departingStatus'] = wait_status
+    payload['departingValue'] = wait_value
     json_payload = json.dumps(payload, indent=1)
     
     try:
@@ -113,9 +110,9 @@ def update_frontend():
             headers = { u'content-type': u'application/json' }, \
             data=json_payload)
 
-        print('Status: %d' % (response.status_code))
+        print('Update Frontend Status: %d' % (response.status_code))
     except Exception:
-        print("Connection Refused")
+        print('Update Frontend Status: Failed')
 
 def update_display():
     pass

@@ -32,7 +32,7 @@ class TramState():
         # between rush hour and normal operation
         if self._is_now:
             self._last_arrival = current_time
-            self._interval = TramState.UNKNOWN
+            self._interval = None
             return
 
         # Set the state

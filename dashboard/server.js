@@ -28,15 +28,16 @@ app.post('/update', function(req, res) {
 
   var status = req.body.status;
   var value = parseInt(req.body.value);
+  var timestamp = '';
 
   if (status == 'UNKNOWN') {
-    // TODO:
+    timestamp = '';
   }
   else if (status == 'NOW') {
-    // TODO:
+    timestamp = formatSeconds(value)
   }
   else if (status == 'ESTIMATE') {
-    // TODO:
+    timestamp = formatSeconds(value);
   }
   else {
     res.end();
@@ -45,7 +46,7 @@ app.post('/update', function(req, res) {
 
   io.emit('update',
     status,
-    value);
+    timestamp);
 
   res.end();
 });
@@ -82,7 +83,7 @@ function takePicture() {
 }
 //----------------------------------------------------------------------------//
 
-function calculateCountdown(value) {
+function formatSeconds(value) {
   var minutes = Math.floor(value / 60);
   value -= minutes * 60;
 
