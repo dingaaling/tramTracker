@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import time
 import json
@@ -78,22 +79,20 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
             tram_state.set_arrival()
 
             # Write detection image for accuracy testing
-            image_name = '%d-ARRIVING.png' % (int(time.time()))
-            imwrite(image_name, current_image)
+            write_image(current_image, direction)
 
         if direction == TramDiffTracker.DEPARTING:
             # Update tram state for departure
             tram_state.set_departure()
 
             # Write detection image for accuracy testing
-            image_name = '%d-DEPARTING.png' % (int(time.time()))
-            imwrite(image_name, current_image)
+            write_image(current_image, direction)
 
         wait_status, wait_value = tram_state.get_wait()
         print('Estimated Wait: %s, %d' % (wait_status, wait_value))
 
         # TODO: process data and pass results to update function
-        # update_frontend(wait_status, wait_value)
+        update_frontend(wait_status, wait_value)
         # update_display()
 
         time.sleep(1)
@@ -102,7 +101,7 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
 def update_frontend(wait_status, wait_value):
     payload = {}
     payload['status'] = wait_status
-    payload['value'] = wait_value
+    payload['countdown'] = wait_value
     json_payload = json.dumps(payload, indent=1)
     
     try:
@@ -116,6 +115,29 @@ def update_frontend(wait_status, wait_value):
 
 def update_display():
     pass
+
+def write_image(current_image, direction):
+    timestamp = datetime.datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
+    
+    # Write detection image for accuracy testing
+    image_name = '%s-%s.png' % (timestamp, direction)
+    image_path = '../dashboard/public/' + image_name
+    imwrite(image_path, current_image)
+
+    payload = {}
+    payload['time'] = timestamp
+    payload['direction'] = direction
+    payload['name'] = image_name
+    json_payload = json.dumps(payload, indent=1)
+    
+    try:
+        response = requests.post("http://localhost:8000/image", \
+            headers = { u'content-type': u'application/json' }, \
+            data=json_payload)
+
+        print('Update Frontend Image: %d' % (response.status_code))
+    except Exception:
+        print('Update Frontend Image: Failed')
 
 if __name__ == '__main__':
     main()

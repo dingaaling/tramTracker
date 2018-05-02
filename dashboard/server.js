@@ -24,29 +24,40 @@ http.listen(serverPort, function() {
 // Our handler function is passed a request and response object
 app.post('/update', function(req, res) {
   console.log('update route called');
-  console.log(req.body)
+  console.log(req.body);
 
   var status = req.body.status;
-  var value = parseInt(req.body.value);
-  var timestamp = '';
+  var countdownValue = parseInt(req.body.countdown);
+  var countdown = '';
 
   if (status == 'UNKNOWN') {
-    timestamp = '';
+    countdown = '';
   }
   else if (status == 'DOCKED') {
-    timestamp = formatSeconds(value)
+    countdown = formatSeconds(countdownValue)
   }
   else if (status == 'ESTIMATE') {
-    timestamp = formatSeconds(value);
+    countdown = formatSeconds(countdownValue);
   }
   else {
     res.end();
     return;
   }
 
-  io.emit('update',
-    status,
-    timestamp);
+  io.emit('update', status, countdown);
+
+  res.end();
+});
+
+app.post('/image', function(req, res) {
+  console.log('image route called');
+  console.log(req.body)
+
+  var name = req.body.name;
+  var time = req.body.time;
+  var direction = req.body.direction;
+
+  io.emit('image', name, time, direction);
 
   res.end();
 });
@@ -68,19 +79,6 @@ io.on('connect', function(socket) {
     console.log('user disconnected');
   });
 });
-
-function takePicture() {
-  // /// First, we create a name for the new picture.
-  // /// The .replace() function removes all special characters from the date.
-  // /// This way we can use it as the filename.
-  // var imageName = new Date().toString().replace(/[&\/\\#,+()$~%.'":*?<>{}\s-]/g, '');
-  // var imagePath = 'public/' + imageName;
-  // var imageLocation = __dirname + '/' + imagePath + '.jpg';
-
-  // console.log('making a making a picture at ' + imageName); // Second, the name is logged to the console.
-
-  // io.emit('newPicture', (imageName + '.jpg')); /// Lastly, the new name is send to the client web browser.
-}
 //----------------------------------------------------------------------------//
 
 function formatSeconds(value) {

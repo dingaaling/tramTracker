@@ -11,45 +11,42 @@ h1 {
 	font-family: sans-serif;
 	text-align: center;
 	color: #323330;
-	font-size:  120px;
+	font-size: 120px;
 }
 
 h2 {
 	font-family: sans-serif;
 	text-align: center;
 	color: #323330;
-	font-size:  80px;
+	font-size: 80px;
 }
 
 h3 {
 	font-family: sans-serif;
 	text-align: center;
 	color: #323330;
-	font-size:  60px;
+	font-size: 60px;
 }
 
-.box {
+h4 {
+	font-family: sans-serif;
+	text-align: center;
+	color: #323330;
+	font-size: 40px;
+}
+
+.box1 {
     margin: auto;
     width: 800px;
-    height: 800px;
+    height: 300px;
     border-radius: 25px;
     background:rgb(196, 44, 44);
 }
 
-#output, #container {
-    display: flex;
-    justify-content: center;
-    margin-top: 100px;
-}
-
-input {
-    background-color: #eee;
-    border: none;
-    font-family: sans-serif;
-    color: #000;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 30px;
+.box2 {
+    margin: auto;
+    width: 800px;
+    height: 500px;
+    border-radius: 25px;
+    background:rgb(196, 44, 44);
 }
