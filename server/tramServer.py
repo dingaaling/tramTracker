@@ -117,15 +117,17 @@ def update_display():
     pass
 
 def write_image(current_image, direction):
-    timestamp = datetime.datetime.now().strftime('%d-%m-%Y_%H-%M-%S')
+    current_time = datetime.datetime.now()
+    file_time = current_time.strftime('%d-%m-%Y_%H-%M-%S')
+    dashboard_time = current_time.strftime('%d/%m/%Y %H:%M:%S')
     
     # Write detection image for accuracy testing
-    image_name = '%s-%s.png' % (timestamp, direction)
+    image_name = '%s-%s.png' % (file_time, direction)
     image_path = '../dashboard/public/' + image_name
     imwrite(image_path, current_image)
 
     payload = {}
-    payload['time'] = timestamp
+    payload['time'] = dashboard_time
     payload['direction'] = direction
     payload['name'] = image_name
     json_payload = json.dumps(payload, indent=1)
