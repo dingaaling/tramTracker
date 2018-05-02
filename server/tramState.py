@@ -72,11 +72,11 @@ class TramState():
         
         # If it is a weekday check for rush hour
         if self._is_tram_rush_hour(current_time, current_weekday):
-            # 5 minutes of air time in seconds
-            return 300
+            # 6 minutes of air time in seconds
+            return 360
         
-        # 10 minutes of air time in seconds
-        return 600
+        # 11 minutes of air time in seconds
+        return 660
 
     def _is_tram_active(self, current_time, current_weekday):
         # 6:00am
