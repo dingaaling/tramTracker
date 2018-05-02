@@ -34,10 +34,12 @@ app.post('/update', function(req, res) {
     countdown = '';
   }
   else if (status == 'DOCKED') {
-    countdown = formatSeconds(countdownValue)
+    countdown = formatSeconds(countdownValue);
+    status = 'Now';
   }
   else if (status == 'ESTIMATE') {
     countdown = formatSeconds(countdownValue);
+    status = 'Next Arrival';
   }
   else {
     res.end();
