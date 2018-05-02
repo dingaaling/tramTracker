@@ -33,7 +33,7 @@ app.post('/update', function(req, res) {
   if (status == 'UNKNOWN') {
     timestamp = '';
   }
-  else if (status == 'NOW') {
+  else if (status == 'DOCKED') {
     timestamp = formatSeconds(value)
   }
   else if (status == 'ESTIMATE') {

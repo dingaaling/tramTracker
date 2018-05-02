@@ -12,7 +12,8 @@ def main():
     try:
         while True:
             serialbus.read() # read a single byte
-            serialbus.write(b'hello') # write bytes
+            serialbus.write(b'NOW,0') # write bytes
+            serialbus.write(b'LEAVING,580') # write bytes
 
             time.sleep(3)
 
