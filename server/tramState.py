@@ -61,6 +61,7 @@ class TramState():
         return TramState.ESTIMATE, wait_estimate
 
     def _get_tram_interval(self):
+        # Current time is formatted in locale of the service (EST)
         current_datetime = datetime.datetime.now()
         current_time = int(current_datetime.strftime('%H%M%S'))
         current_weekday = int(current_datetime.weekday())

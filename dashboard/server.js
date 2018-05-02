@@ -82,10 +82,15 @@ io.on('connect', function(socket) {
 //----------------------------------------------------------------------------//
 
 function formatSeconds(value) {
+  var sign = '-' ? (value < 0) : '';
+  value = Math.abs(value);
+
+  // Calculate minutes
   var minutes = Math.floor(value / 60);
   value -= minutes * 60;
 
+  // Calculate seconds
   var seconds = value;
-
-  return minutes + " minutes, " + seconds + " seconds";
+  
+  return sign + minutes + " minutes, " + seconds + " seconds";
 }
