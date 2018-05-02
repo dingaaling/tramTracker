@@ -82,7 +82,11 @@ io.on('connect', function(socket) {
 //----------------------------------------------------------------------------//
 
 function formatSeconds(value) {
-  var sign = '-' ? (value < 0) : '';
+  var sign = '';
+  if (value < 0) {
+    sign = 'Delayed: ';
+  }
+
   value = Math.abs(value);
 
   // Calculate minutes
@@ -91,6 +95,6 @@ function formatSeconds(value) {
 
   // Calculate seconds
   var seconds = value;
-  
+
   return sign + minutes + " minutes, " + seconds + " seconds";
 }
