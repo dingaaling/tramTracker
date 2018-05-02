@@ -93,7 +93,7 @@ def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
         print('Estimated Wait: %s, %d' % (wait_status, wait_value))
 
         # TODO: process data and pass results to update function
-        update_frontend(wait_status, wait_value)
+        # update_frontend(wait_status, wait_value)
         # update_display()
 
         time.sleep(1)

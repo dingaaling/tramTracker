@@ -23,6 +23,10 @@ class TramState():
         # Get the current time
         current_time = self._current_time()
 
+        # If the tram is already docked ignore the second tram parking
+        if self._is_docked:
+            return
+
         # Set the state
         self._last_arrival = current_time
         self._interval = self._get_tram_interval()
