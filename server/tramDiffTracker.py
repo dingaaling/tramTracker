@@ -14,7 +14,8 @@ class TramDiffTracker():
     def __init__(self, threshold=700000):
         """Create a tram diff tracker instance"""
         self._threshold = threshold
-        self._is_detected = True
+        self._detection_count = 0
+        self._detection_direction = TramDiffTracker.NONE
 
     def detect(self, previous_image, current_image):
         # Crop the images to a fixed view
@@ -27,16 +28,22 @@ class TramDiffTracker():
 
         # If difference from previous frame is above the threshold
         if diff_sum >= self._threshold:
-            # If tram is already detected in this sequence
-            if self._is_detected:
-                return TramDiffTracker.NONE
-                
-            # Determain the tram's direction of travel
-            self._is_detected = True
-            return self._determine_direction(diff)
-        
+            self._detection_count += 1
+
+            # If this is the first detection in a series calculate its direction
+            if self._detection_count == 1:
+                self._detection_direction = self._determine_direction(diff)
+            
+            # If this is the second detection in a series return the direction
+            if self._detection_count == 2:
+                return self._detection_direction
+
+            # Else return no detection
+            return TramDiffTracker.NONE
+
         # The tram was not detected so clear state
-        self._is_detected = False
+        self._detection_count = 0
+        self._detection_direction = TramDiffTracker.NONE
         return TramDiffTracker.NONE
 
     def _determine_direction(self, diff):
