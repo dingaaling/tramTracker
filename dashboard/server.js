@@ -9,6 +9,12 @@ var http = require('http').Server(app); // connects http library to server
 var io = require('socket.io')(http); // connect websocket library to server
 var serverPort = 8000;
 
+var lastStatus = null;
+var lastCountdown = null;
+var lastName = null;
+var lastTime = null;
+var lastDirection = null;
+
 //---------------------- WEBAPP SERVER SETUP ---------------------------------//
 // use express to create the simple webapp
 app.use(express.static('public')); // find pages in public directory
@@ -46,6 +52,9 @@ app.post('/update', function(req, res) {
     return;
   }
 
+  lastStatus = status;
+  lastCountdown = countdown;
+
   io.emit('update', status, countdown);
 
   res.end();
@@ -59,6 +68,10 @@ app.post('/image', function(req, res) {
   var time = req.body.time;
   var direction = req.body.direction;
 
+  lastName = name;
+  lastTime = time;
+  lastDirection = direction;
+
   io.emit('image', name, time, direction);
 
   res.end();
@@ -71,10 +84,13 @@ app.post('/image', function(req, res) {
 io.on('connect', function(socket) {
   console.log('a user connected');
 
-  // //-- Addition: This function is called when the client clicks on the `Take a picture` button.
-  // socket.on('takePicture', function() {
-  //   takePicture();
-  // });
+  if (lastStatus != null) {
+    io.emit('update', lastStatus, lastCountdown);
+  }
+
+  if (lastName != null) {
+    io.emit('image', lastName, lastTime, lastDirection);
+  }
 
   // if you get the 'disconnect' message, say the user disconnected
   socket.on('disconnect', function() {
