@@ -4,7 +4,6 @@ import os
 import sys
 import time
 import json
-import serial
 import requests
 import datetime
 import numpy as np
@@ -18,20 +17,18 @@ def main():
     """Tram Server"""
     try:
         camera = VideoCapture(0)
-        serial_bus = None # serial.Serial('/dev/ttyUSB0', 19200)
         image_queue = ImageQueue()
         tram_state = TramState()
         tram_diff_tracker = TramDiffTracker()
 
         # Run the server loop
-        run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker)
+        run(camera, image_queue, tram_state, tram_diff_tracker)
     except KeyboardInterrupt:
         pass
     finally:
         camera.release()
-        # serial_bus.close()
 
-def run(camera, serial_bus, image_queue, tram_state, tram_diff_tracker):
+def run(camera, image_queue, tram_state, tram_diff_tracker):
     # Fill image queue
     print('Focusing the camera...')
     image_count = 0
@@ -112,9 +109,6 @@ def update_frontend(wait_status, wait_value):
         print('Update Frontend Status: %d' % (response.status_code))
     except Exception:
         print('Update Frontend Status: Failed')
-
-def update_display():
-    pass
 
 def write_image(current_image, direction):
     current_time = datetime.datetime.now()
