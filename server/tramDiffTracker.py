@@ -34,8 +34,8 @@ class TramDiffTracker():
             if self._detection_count == 1:
                 self._detection_direction = self._determine_direction(diff)
             
-            # If this is the second detection in a series return the direction
-            if self._detection_count == 2:
+            # If this is the third detection in a series return the direction
+            if self._detection_count == 3:
                 return self._detection_direction
 
             # Else return no detection
