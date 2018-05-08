@@ -7,9 +7,10 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, PIXELSPIN, NEO_GRB + NEO_
 
 
 unsigned long wipeInterval=20000;  // the time we need to wait (20 seconds per LED, 10 min to complete)
-unsigned long theaterInterval=50;  // the time we need to wait
+unsigned long theaterInterval=1000;  // the time we need to wait
 unsigned long colorWipePreviousMillis=0;
 unsigned long theaterChasePreviousMillis=0;
+int data = -1;
 
 int theaterChaseQ = 0;
 uint16_t currentPixel = 0;// what pixel are we operating on
@@ -26,26 +27,36 @@ void loop () {
 
         if (Serial.available() > 0) {
           data = Serial.read();
+          Serial.println(data);
+          currentPixel = 0;
 
-          if (data == 0){
-            if ((unsigned long)(millis() - colorWipePreviousMillis) >= wipeInterval) {
-              colorWipePreviousMillis = millis();
-              colorWipe(strip.Color(255,0,0));
+          if (data != 0) {
+            for (int i=0; i<NUMPIXELS; i++){
+              colorWipe(strip.Color(255,255,255));
             }
-
           }
-
-          else if (data > 0){
-      
+          else {
+            for (int i=0; i<NUMPIXELS; i++){
+              colorWipe(strip.Color(0,0,0));
+            }
+          }
+        }
+        
+        if (data == 0){
             if ((unsigned long)(millis() - theaterChasePreviousMillis) >= theaterInterval) {
               theaterChasePreviousMillis = millis();
               theaterChase(strip.Color(255,0,0));
-            }
+              }
 
           }
 
-  }
-
+        else if (data > 0 && data != 255){
+          wipeInterval=data*2*1000;
+          if ((unsigned long)(millis() - colorWipePreviousMillis) >= wipeInterval) {
+            colorWipePreviousMillis = millis();
+            colorWipe(strip.Color(255,0,0));
+          }
+    }
 }
 
 
