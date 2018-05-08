@@ -88,9 +88,12 @@ def run(camera, image_queue, tram_state, tram_diff_tracker):
         wait_status, wait_value = tram_state.get_wait()
         print('Estimated Wait: %s, %d' % (wait_status, wait_value))
 
-        # TODO: process data and pass results to update function
+        # Pass results to the frontend dashboard
         update_frontend(wait_status, wait_value)
-        # update_display()
+
+        # Pass results to the display
+        if direction != TramDiffTracker.NONE:
+            update_display(wait_status, wait_value)
 
         time.sleep(1)
         image_count += 1
@@ -109,6 +112,22 @@ def update_frontend(wait_status, wait_value):
         print('Update Frontend Status: %d' % (response.status_code))
     except Exception:
         print('Update Frontend Status: Failed')
+
+def update_display(wait_status, wait_value):
+    payload = {}
+    payload['status'] = wait_status
+    payload['countdown'] = wait_value
+    json_payload = json.dumps(payload, indent=1)
+    
+    try:
+        # TODO: update with ngrok endpoint
+        response = requests.post("http://localhost:5000/update", \
+            headers = { u'content-type': u'application/json' }, \
+            data=json_payload)
+
+        print('Update Display Status: %d' % (response.status_code))
+    except Exception:
+        print('Update Display Status: Failed')
 
 def write_image(current_image, direction):
     current_time = datetime.datetime.now()
