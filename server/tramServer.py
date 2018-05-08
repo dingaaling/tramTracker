@@ -120,8 +120,8 @@ def update_display(wait_status, wait_value):
     json_payload = json.dumps(payload, indent=1)
     
     try:
-        # TODO: update with ngrok endpoint
-        response = requests.post("http://localhost:5000/update", \
+        # TODO: update with latest ngrok endpoint
+        response = requests.post("http://0fd9e982.ngrok.io/update", \
             headers = { u'content-type': u'application/json' }, \
             data=json_payload)
 
