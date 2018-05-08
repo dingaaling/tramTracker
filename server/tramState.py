@@ -75,8 +75,8 @@ class TramState():
             # 4 minutes of air time in seconds
             return 240
         
-        # 10 minutes of air time in seconds
-        return 600
+        # 8 minutes of air time in seconds
+        return 480
 
     def _is_tram_active(self, current_time, current_weekday):
         # 6:00am
